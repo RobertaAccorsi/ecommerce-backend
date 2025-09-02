@@ -1,0 +1,18 @@
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { State } from "./states.entity";
+
+
+@Entity('city')
+export class City {
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
+
+    @Column({length: 60, nullable: false})
+    name: string;
+    
+    @Column({length: 2, nullable: true})
+    ibge: string;
+
+   @ManyToOne(()=>State, {eager: true, nullable: false})
+    state: State;
+}
