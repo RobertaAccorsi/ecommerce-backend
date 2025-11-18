@@ -11,8 +11,8 @@ enum OrderStatus{
     CENCELED = 'CANCELADO'
 }
 
-@Entity('order')
-export class order {
+@Entity('Order')
+export class Order {
     @PrimaryGeneratedColumn('uuid')
     id: string;
     @ManyToOne(() => Customer, {eager: true, nullable:false})
