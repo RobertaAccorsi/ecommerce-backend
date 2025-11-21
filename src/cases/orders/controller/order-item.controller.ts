@@ -1,12 +1,13 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseUUIDPipe, Post, Put } from "@nestjs/common";
-import { OrderItem } from "../entities/order-item.entities";
-import { OrderItemService } from "src/cases/Customers/service/order-item.service";
+
+import { OrderItemService } from "../service/order-item.service";
+import { OrderItem } from "../entities/order-item.entity";
 
 @Controller('order-items')
 export class OrderItemController {
-    constructor (
+    constructor(
         private readonly service: OrderItemService
-    ) {}
+    ) { }
 
     @Get()
     findAll(): Promise<OrderItem[]> {
@@ -16,7 +17,7 @@ export class OrderItemController {
     @Get(':id')
     async findById(@Param('id', ParseUUIDPipe) id: string): Promise<OrderItem> {
         const found = await this.service.findById(id);
-        
+
         if (!found) {
             throw new HttpException('Item not found', HttpStatus.NOT_FOUND);
         }
@@ -32,7 +33,7 @@ export class OrderItemController {
     @Put(':id')
     async update(@Param('id', ParseUUIDPipe) id: string, @Body() orderItem: OrderItem): Promise<OrderItem> {
         const found = await this.service.findById(id);
-        
+
         if (!found) {
             throw new HttpException('Item not found', HttpStatus.NOT_FOUND);
         }
@@ -46,7 +47,7 @@ export class OrderItemController {
     @HttpCode(204)
     async remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
         const found = await this.service.findById(id);
-        
+
         if (!found) {
             throw new HttpException('Item not found', HttpStatus.NOT_FOUND);
         }

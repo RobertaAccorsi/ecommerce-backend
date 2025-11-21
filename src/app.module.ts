@@ -4,9 +4,10 @@ import { CategoryModule } from './cases/categories/category.module';
 import { BrandModule } from './cases/brands/brand.module';
 import { ProductModule } from './cases/products/product.module';
 import { ConfigModule } from '@nestjs/config';
+import { OrderModule } from './cases/orders/order.module';
 import { CityModule } from './cases/cities/services/city.module';
 import { CustomerModule } from './cases/Customers/customer.module';
-import { OrderModule } from './cases/orders/order.module';
+
 
 @Module({
   imports: [
@@ -26,8 +27,8 @@ import { OrderModule } from './cases/orders/order.module';
     CategoryModule, 
     BrandModule, 
     ProductModule,
-    CityModule,
-    CustomerModule,
+    CityModule, 
+    CustomerModule, 
     OrderModule
   ],
 })

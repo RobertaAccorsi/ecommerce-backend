@@ -1,22 +1,41 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseUUIDPipe, Post, Put } from "@nestjs/common";
-import { OrderService } from "src/cases/Customers/service/order.service";
-import { Order } from "../entities/order.entities";
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseUUIDPipe, Post, Put, Query } from "@nestjs/common";
+import { validate as isUUID } from 'uuid';
+import { OrderService } from "../service/order.service";
+import { Order } from "../entities/order.entity";
+import { CustomerService } from "src/cases/Customers/customer.service";
+
 
 @Controller('orders')
 export class OrderController {
-    constructor (
+
+    constructor(
+        private readonly customerService: CustomerService,
         private readonly service: OrderService
-    ) {}
+    ) { }
 
     @Get()
-    findAll(): Promise<Order[]> {
+    async find(@Query('customerId') customerId: string): Promise<Order[]> {
+        console.log("customerId recebido na controller:", customerId);
+        if (customerId && isUUID(customerId)) {
+            const customer = await this.customerService.findById(customerId);
+            if (!customer) {
+                return [];
+            }
+            return this.service.findAll(customer);
+        }
+
         return this.service.findAll();
+    }
+
+    @Get('entregues/:idUser')
+    async listDelivered(@Param('idUser') idUser: string): Promise<Order[]> {
+        return this.service.listEntregues(idUser);
     }
 
     @Get(':id')
     async findById(@Param('id', ParseUUIDPipe) id: string): Promise<Order> {
         const found = await this.service.findById(id);
-        
+
         if (!found) {
             throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
         }
@@ -32,7 +51,7 @@ export class OrderController {
     @Put(':id')
     async update(@Param('id', ParseUUIDPipe) id: string, @Body() order: Order): Promise<Order> {
         const found = await this.service.findById(id);
-        
+
         if (!found) {
             throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
         }
@@ -43,14 +62,16 @@ export class OrderController {
     }
 
     @Delete(':id')
-    @HttpCode(204)
+    @HttpCode(HttpStatus.NO_CONTENT)
     async remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
         const found = await this.service.findById(id);
-        
+
         if (!found) {
             throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
         }
 
         return this.service.remove(id);
-    }
+    } 
+
+
 }
